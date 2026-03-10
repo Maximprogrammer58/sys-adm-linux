@@ -85,7 +85,7 @@ sudo adduser shamenkov
 sudo usermod -aG sudo shamenkov
 ```
 
-### 2.3. Наделяем пользователя правами администратора
+### 2.3. Проверка создания пользователя
 ```bash
 id shamenkov
 ```
