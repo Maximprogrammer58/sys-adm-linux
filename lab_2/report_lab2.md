@@ -119,7 +119,10 @@ sudo lvextend -l +100%FREE /dev/shamenkov/lv0
 ```
 
 #### Расширяем файловую систему
+
+```bash
 sudo resize2fs /dev/shamenkov/lv0
+```
 
 ![alt text](img/image-27.png)
 
@@ -127,25 +130,36 @@ sudo resize2fs /dev/shamenkov/lv0
 ## Задание 9 — NFS
 
 ### Создать папку
+```bash
 sudo mkdir -p /raid/0/backup
-
+```
 ### Настраиваем экспорт
+```bash
 sudo nano /etc/exports
+```
 ![alt text](img/image-28.png)
 
 ### Применяем конфиг
+```bash
 sudo exportfs -rav
+```
 
 ### Запускаем NFS + проверка
+```bash
 sudo systemctl enable --now nfs-kernel-server
+```
 
 ![alt text](img/image-29.png)
 
 ### Создаем точку монтирования
+```bash
 sudo mkdir -p /mnt/nfs_test
+```
 
 ### Смонтируем
+```bash
 sudo mount -t nfs 127.0.0.1:/raid/0/backup /mnt/nfs_test
+```
 ![alt text](img/image-31.png)
 
 
@@ -161,16 +175,22 @@ sudo mount -t nfs 127.0.0.1:/raid/0/backup /mnt/nfs_test
 /home/shamenkov → /raid/0/backup
 
 ### Создаем скрипт
+```bash
 sudo nano /usr/local/bin/backup.sh
+```
 
 ![alt text](img/image-32.png)
 
 ### Делаем скрипт исполняемым
+```bash
 sudo chmod +x /usr/local/bin/backup.sh
+```
 
 ### Проверяем сначала вручную
+```bash
 sudo chmod +x /usr/local/bin/backup.sh
 ls -lh /raid/0/backup
+```
 
 ### Отлично появился файл backup_2026-04-05_15-18-07.tar.gz
 
@@ -187,7 +207,9 @@ ls -lh /raid/0/backup
 ### Итог: проблема. пользователь shamenkov НЕ может писать в /raid/0/backup
 
 ### Исправляем владельца
+```bash
 sudo chown -R shamenkov:shamenkov /raid/0/backup
+```
 
 ### Теперь ждем 2 минуты и проверяем 
 #### Состояние до
@@ -202,14 +224,20 @@ sudo chown -R shamenkov:shamenkov /raid/0/backup
 
 ### Смотрим правила в iptables
 
+
+```bash
 sudo iptables -L -n -v
+```
 
 ![alt text](img/image-38.png)
 
 ### Запрещаем icmp трафик
+```bash
 sudo iptables -A INPUT -p icmp -j DROP
+```
 
 ### Проверка ping не идет 
+
 ![alt text](img/image-39.png)
 
 
@@ -218,13 +246,17 @@ sudo iptables -A INPUT -p icmp -j DROP
 
 ### Блокировка выбранного IP=192.168.50.124
 
+```bash
 sudo iptables -A INPUT -s 192.168.50.124 -j DROP
+```
 
 ### Результат:
 Текущая сессия ssh закрылась
 
 ### Далее заблокируем подключаения по ssh
+```bash
 sudo iptables -A INPUT -p tcp --dport 22 -j DROP
+```
 
 ### Проверка
 ![alt text](img/image-41.png)
@@ -232,7 +264,9 @@ sudo iptables -A INPUT -p tcp --dport 22 -j DROP
 
 ## Задание 12 — удаление правил
 
+```bash
 sudo iptables -F
+```
 
 ### Проверка 
 ![alt text](img/image-42.png)
@@ -246,7 +280,9 @@ sudo iptables -F
 ## Задание 13 — Включить брандмауэр ufw и создать те же правила блокировки.
 
 ### Включаем UFW
+```bash
 sudo ufw enable
+```
 
 ![alt text](img/image-45.png)
 
@@ -259,28 +295,40 @@ sudo ufw enable
 
 ### Блокируем ping
 
+```bash
 sudo nano /etc/ufw/before.rules
+```
 
 #### Находим строку 
+```bash
 -A ufw-before-input -p icmp --icmp-type echo-request -j ACCEPT
+```
 
 #### Меняем на 
+```bash
 -A ufw-before-input -p icmp --icmp-type echo-request -j DROP
+```
 
 ![alt text](img/image-48.png)
 
 ### Применим изменения
+```bash
 sudo ufw reload
+```
 
 ### Проверка
+```bash
 sudo ufw status numbered
+```
 
 ![alt text](img/image-49.png)
 
 ## Задание 14 — Мониторинг и диагностика: использовать ss и nc для просмотра портов и проверки доступности.
 
 ### Проверка портов через ss
+```bash
 ss -tuln
+```
 ![alt text](img/image-50.png)
 
 ### Проверка портов через nc
@@ -292,25 +340,35 @@ ss -tuln
 ![alt text](img/image-52.png)
 
 ### Фильтр по порту (например SSH)
+```bash
 sudo tcpdump -i ens33 port 22
+```
 ![alt text](img/image-54.png)
 
 ### Фильтр по ICMP (ping)
+```bash
 sudo tcpdump -i ens33 icmp
+```
 ![alt text](img/image-55.png)
 
 ### Запись в файл
+```bash
 sudo tcpdump -i ens33 -w capture.pcap
+```
 ![alt text](img/image-53.png)
 ![alt text](img/image-56.png)
 
 ## Задание 16 — iptraf-ng
 
 ### Установка
+```bash
 sudo apt install iptraf-ng -y
+```
 
 ### Запуск
+```bash
 sudo iptraf-ng
+```
 ![alt text](img/image-57.png)
 
 ![alt text](img/image-58.png)
@@ -326,50 +384,68 @@ sudo iptraf-ng
 
 ### Открываем порты 139 и 445
 
+```bash
 sudo ufw allow 139
 sudo ufw allow 445
+```
 
 ![alt text](img/image-61.png)
 
-### Проерим через nc
+### Проверим через nc
 ![alt text](img/image-62.png)
 
 ## Задание 19 — openVPN
 
 ### Установка
+```bash
 sudo apt install openvpn easy-rsa
+```
 
 
 ### Создали инфраструктуру сертификатов (PKI)
+```bash
 make-cadir ~/openvpn-ca
 cd ~/openvpn-ca
 ./easyrsa init-pki
 ./easyrsa build-ca
+```
 
 ### Сгенерировали сертификаты на сервере
+```bash
 ./easyrsa gen-req server nopass
 ./easyrsa sign-req server server
+```
 
 ### Сгенерировали сертификаты на клиенте
+```bash
 ./easyrsa gen-req client1 nopass
 ./easyrsa sign-req client client1
+```
 
 ### Генерация параметров Диффи-Хеллмана
+```bash
 ./easyrsa gen-dh
+```
 
 ### Копирование файлов на сервер 
+```bash
 sudo cp pki/ca.crt /etc/openvpn/
 sudo cp pki/private/server.key /etc/openvpn/
 sudo cp pki/issued/server.crt /etc/openvpn/
 sudo cp pki/dh.pem /etc/openvpn/
+```
 
 ### Настройка конфиг файл server.conf
+```bash
 /etc/openvpn/server.conf
+```
 
 ![alt text](img/image-76.png)
 
 ### Включение машрутизацию
+```bash
 net.ipv4.ip_forward=1
+```
 
 ### Запуск сервер и провери работу
 ![alt text](img/image-77.png)
@@ -378,43 +454,59 @@ net.ipv4.ip_forward=1
 ![alt text](img/image-78.png)
 
 ### Передача файлов на клиент 
+```bash
 scp shamenkov@192.168.50.240:~/openvpn-ca/pki/ca.crt .
 scp shamenkov@192.168.50.240:~/openvpn-ca/pki/issued/client1.crt .
 scp shamenkov@192.168.50.240:~/openvpn-ca/pki/private/client1.key .
 scp shamenkov@192.168.50.240:~/openvpn-ca/client1.ovpn .
+```
 
 ### Передачи ovpn на клиент и запуск
+```bash
 sudo openvpn --config client1.ovpn
+```
 ![alt text](img/image-79.png)
 
 
 
-## Задание 20 — openVPN
+## Задание 20 — Samba
 ### Установка
+```bash
 sudo apt install samba -y
+```
 
 ### Создаем папку, которую будем расшаривать
+```bash
 sudo mkdir -p /raid/0/share
+```
 
 ### Создаем тестовый файлик
+```bash
 echo "test file" | sudo tee /raid/0/share/test.txt
+```
 
 ### Настроить права на папку
+```bash
 sudo chmod 777 /raid/0/share
+```
 
 ![alt text](img/image-85.png)
 
 
 ### Отредактируем конфиг samba
+```bash
 sudo nano /etc/samba/smb.conf
+```
 
 ### Добавим следующий раздел
+```bash
 [share]
    path = /raid/0/share
    browseable = yes
    writable = yes
    guest ok = yes
    read only = no
+```
 
 ![alt text](img/image-86.png)
 
@@ -426,7 +518,9 @@ sudo nano /etc/samba/smb.conf
 ![alt text](img/image-88.png)
 
 ### Проверка работы smb
+```bash
 smbclient -L //172.23.0.7 -N
+```
 ![alt text](img/image-89.png)
 
 ## Задание 21 — Настроить проброс портов 139 и 445 из сети 172.23.0.0/24 в VPN-сеть 10.8.0.0/24.
@@ -435,21 +529,29 @@ smbclient -L //172.23.0.7 -N
 
 ### Проброс входящих соединений
 
+```bash
 sudo iptables -t nat -A PREROUTING -i ens33 -p tcp --dport 139 -j DNAT --to-destination 10.8.0.2:139
 sudo iptables -t nat -A PREROUTING -i ens33 -p tcp --dport 445 -j DNAT --to-destination 10.8.0.2:445
+```
 
 ### Разрешаем пересылку
+```bash
 sudo iptables -A FORWARD -p tcp -d 10.8.0.2 --dport 139 -j ACCEPT
 sudo iptables -A FORWARD -p tcp -d 10.8.0.2 --dport 445 -j ACCEPT
+```
 
 ### Включаем NAT
+```bash
 sudo iptables -t nat -A POSTROUTING -o tun0 -j MASQUERADE
+```
 
 ![alt text](img/image-90.png)
 
 ### Проверим на хосте
+```bash
 nc -zv 192.168.50.240 139
 nc -zv 192.168.50.240 445
+```
 
 ![alt text](img/image-91.png)
 
