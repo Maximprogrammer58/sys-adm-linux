@@ -66,12 +66,12 @@
 ### Создать точку монтирования и смонтировать
 ![alt text](img/image-17.png)
 
-### Делаем постоянно монтирование
+### Делаем постоянное монтирование
 
 #### Узнаем uuid
 ![alt text](img/image-19.png)
 
-#### Сделали запис в файле sudo nano /etc/fstab
+#### Сделали запись в файле sudo nano /etc/fstab
 ![alt text](img/image-18.png)
 
 #### Монтируем и проверяем
@@ -392,7 +392,11 @@ sudo ufw allow 445
 ![alt text](img/image-61.png)
 
 ### Проверим через nc
-![alt text](img/image-62.png)
+```bash
+nc -zv 127.0.0.1 139
+nc -zv 127.0.0.1 445
+```
+![alt text](img/image-100.png)
 
 ## Задание 19 — openVPN
 
