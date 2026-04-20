@@ -8,6 +8,7 @@
 ## Задание 1. Подготовить хостовую машину с KVM
 
 Испоьзовали wsl с поддержкой аппаратной виртуализации.
+
 ![alt text](img/image.png)
 
 Установили `qemu-kvm`, `libvirt-daemon-system`, `libvirt-clients`, `virt-manager`:
@@ -46,20 +47,25 @@ virt-install \
 ```
 
 Запустили установку:
+
 ![alt text](img/image-5.png)
 
 Проверили адрес для подключения:
+
 ![alt text](img/image-4.png)
 
 Подключение VNC-клиента:
+
 ![alt text](img/image-3.png)
 ![alt text](img/image-2.png)
 
 Загрузка Ubuntu:
+
 ![alt text](img/image-6.png)
 ![alt text](img/image-7.png)
 
 Запустили и вошли под пользователем user:
+
 ![alt text](img/image-8.png)
 
 ## Задание 3. Сделано при установке
